@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset 
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+ 
+  <!-- Homepage -->
+  <url>
+    <loc>https://kaziresort.com/</loc>
+    <lastmod>2025-06-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+ 
+  <!-- Book Now -->
+  <url>
+    <loc>https://kaziresort.com/book-now</loc>
+    <lastmod>2025-06-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+ 
+  <!-- Accommodations Overview -->
+  <url>
+    <loc>https://kaziresort.com/accommodations</loc>
+    <lastmod>2025-06-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+ 
+  <!-- Sample Room Detail with Image -->
+  <url>
+    <loc>https://kaziresort.com/room_details/38/super-deluxe</loc>
+    <lastmod>2025-06-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://kaziresort.com/uploads/rooms/super-deluxe.jpg</image:loc>
+      <image:caption>Super Deluxe Room with Scenic View</image:caption>
+    </image:image>
+  </url>
+ 
+  <!-- Events & Meetings -->
+  <url>
+    <loc>https://kaziresort.com/events-and-meetings</loc>
+    <lastmod>2025-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+ 
+  <!-- Gallery -->
+  <url>
+    <loc>https://kaziresort.com/gallery</loc>
+    <lastmod>2025-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+ 
+  <!-- Dining -->
+  <url>
+    <loc>https://kaziresort.com/dining</loc>
+    <lastmod>2025-06-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+ 
+  <!-- Facilities -->
+  <url>
+    <loc>https://kaziresort.com/facilities</loc>
+    <lastmod>2025-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+ 
+  <!-- Terms -->
+  <url>
+    <loc>https://kaziresort.com/terms-&-conditions</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+ 
+  <!-- Affiliate Program -->
+  <url>
+    <loc>https://kaziresort.com/affiliate-program</loc>
+    <lastmod>2025-06-25</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+ 
+  <!-- Contact -->
+  <url>
+    <loc>https://kaziresort.com/contact-us</loc>
+    <lastmod>2025-06-25</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+ 
+  <!-- Career -->
+  <url>
+    <loc>https://career.kaziresort.com/</loc>
+    <lastmod>2025-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+ 
+</urlset>

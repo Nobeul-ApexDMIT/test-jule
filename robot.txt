@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /blogs/
+
+# Sitemap location
+Sitemap: https://kaziresort.com/sitemap.xml
