@@ -1,5 +1,9 @@
 @extends('frontend.layout')
 
+@section('styles')
+  @include('frontend.theme_one_two.include.styles')
+@endsection
+
 @section('pageHeading')
   {{ __('Affiliate Login') }}
 @endsection
