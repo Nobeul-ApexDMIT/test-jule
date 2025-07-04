@@ -171,6 +171,14 @@
                       @enderror
                     </div>
                   </div>
+
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label>{{ __('Affiliate Code (Optional)') }}</label>
+                      <input type="text" class="form-control" placeholder="{{ __('Enter Affiliate Code') }}" name="affiliate_code_input_admin" value="{{ old('affiliate_code_input_admin') }}">
+                      {{-- No error display needed for optional field --}}
+                    </div>
+                  </div>
                 </div>
               </form>
             </div>

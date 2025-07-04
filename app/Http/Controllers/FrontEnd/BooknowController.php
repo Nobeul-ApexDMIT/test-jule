@@ -17,6 +17,11 @@ class BooknowController extends Controller
 
     public function bookNow(Request $request)
     {
+        // Handle affiliate reference code
+        if ($request->has('ref')) {
+            $request->session()->put('affiliate_code', $request->input('ref'));
+        }
+
         if ($request->isMethod('post')) {
             $validator = Validator::make($request->all(), [
                 'checkin_date' => 'required|date_format:Y-m-d',
@@ -44,6 +49,11 @@ class BooknowController extends Controller
             ];
 
             Mail::to($recipients)->send(new BooknowEmail($data));
+
+            // Clear the affiliate code from session after form submission attempt
+            // $request->session()->forget('affiliate_code');
+            // Decided against clearing here, as the actual booking controllers will use it.
+            // This controller only sends an email.
 
             return redirect()->back()->with('success', 'Your message has been sent successfully.');
         }

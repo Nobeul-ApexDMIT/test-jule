@@ -484,6 +484,14 @@
                     @enderror
                   </div>
 
+                  {{-- Affiliate Code Input --}}
+                  <div class="mb-2">
+                    <div class="input-wrap">
+                      <input type="text" placeholder="{{ __('Affiliate Code (Optional)') }}" name="affiliate_code_input" value="{{ old('affiliate_code_input', session()->get('affiliate_code')) }}">
+                      <i class="fas fa-handshake"></i>
+                    </div>
+                  </div>
+
                   <div class="mb-2">
                     <div class="input-wrap">
                       <select class="nice-select" name="paymentType" id="payment-gateways">

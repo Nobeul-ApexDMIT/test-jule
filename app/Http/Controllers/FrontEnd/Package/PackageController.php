@@ -27,6 +27,11 @@ class PackageController extends Controller
 
   public function packages(Request $request)
   {
+    // Handle affiliate reference code
+    if ($request->has('ref')) {
+        $request->session()->put('affiliate_code', $request->input('ref'));
+    }
+
     $queryResult['breadcrumbInfo'] = MiscellaneousTrait::getBreadcrumb();
     $queryResult['packageRating'] = DB::table('basic_settings')->select('package_rating_status')->first();
 

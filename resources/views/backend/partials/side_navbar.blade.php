@@ -1061,6 +1061,34 @@
           </li>
         @endif
 
+        {{-- Affiliate Management --}}
+        @if (empty($admin->role) || (!empty($permissions) && in_array('Affiliate Management', $permissions)))
+          <li class="nav-item @if (request()->routeIs('admin.affiliates.index')) active
+            @elseif (request()->routeIs('admin.affiliates.view')) active @endif"
+          >
+            <a data-toggle="collapse" href="#affiliateManagement">
+              <i class="fas fa-handshake"></i>
+              <p>{{ __('Affiliate Management') }}</p>
+              <span class="caret"></span>
+            </a>
+            <div id="affiliateManagement" class="collapse
+              @if (request()->routeIs('admin.affiliates.index')) show
+              @elseif (request()->routeIs('admin.affiliates.view')) show @endif"
+            >
+              <ul class="nav nav-collapse">
+                <li class="@if (request()->routeIs('admin.affiliates.index')) active
+                  @elseif (request()->routeIs('admin.affiliates.view')) active @endif"
+                >
+                  <a href="{{ route('admin.affiliates.index') }}">
+                    <span class="sub-item">{{ __('Applications') }}</span>
+                  </a>
+                </li>
+                {{-- Add more sub-items here like 'Commission History', 'Payments' when those are built --}}
+              </ul>
+            </div>
+          </li>
+        @endif
+
         {{-- Cache Clear --}}
         <li class="nav-item">
           <a href="{{route('admin.cache.clear')}}">

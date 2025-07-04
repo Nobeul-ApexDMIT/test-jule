@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\FrontEnd\Package;
 
 use App\Http\Controllers\Controller;
+use App\Models\BasicSettings\Basic; // Added for commission rate
+use App\Models\AffiliateSystem\Affiliate; // Added
+use App\Models\AffiliateSystem\AffiliateReferral; // Added
+use App\Models\AffiliateSystem\AffiliateCommission; // Added
 use App\Http\Controllers\FrontEnd\Package\FlutterwaveController;
 use App\Http\Controllers\FrontEnd\Package\InstamojoController;
 use App\Http\Controllers\FrontEnd\Package\MercadoPagoController;
@@ -180,25 +184,65 @@ class PackageBookingController extends Controller
 
   public function storeData(Request $request, $information)
   {
-    $booking_details = PackageBooking::create([
-      'booking_number' => time(),
-      'user_id' => Auth::guard('web')->check() == true ? Auth::guard('web')->user()->id : null,
-      'customer_name' => $request->customer_name,
-      'customer_email' => $request->customer_email,
-      'customer_phone' => $request->customer_phone,
-      'package_id' => $request->package_id,
-      'visitors' => $request->visitors,
-      'subtotal' => $information['subtotal'],
-      'discount' => $information['discount'],
-      'grand_total' => $information['total'],
-      'currency_symbol' => $information['currency_symbol'],
-      'currency_symbol_position' => $information['currency_symbol_position'],
-      'currency_text' => $information['currency_text'],
-      'currency_text_position' => $information['currency_text_position'],
-      'payment_method' => $information['method'],
-      'gateway_type' => $information['type'],
-      'attachment' => $request->hasFile('attachment') ? $information['attachment'] : null
-    ]);
+    // Store basic booking details first
+    $booking_details = new PackageBooking;
+    $booking_details->booking_number = time();
+    $booking_details->user_id = Auth::guard('web')->check() == true ? Auth::guard('web')->user()->id : null;
+    $booking_details->customer_name = $request->customer_name;
+    $booking_details->customer_email = $request->customer_email;
+    $booking_details->customer_phone = $request->customer_phone;
+    $booking_details->package_id = $request->package_id;
+    $booking_details->visitors = $request->visitors;
+    $booking_details->subtotal = $information['subtotal'];
+    $booking_details->discount = $information['discount'];
+    $booking_details->grand_total = $information['total'];
+    $booking_details->currency_symbol = $information['currency_symbol'];
+    $booking_details->currency_symbol_position = $information['currency_symbol_position'];
+    $booking_details->currency_text = $information['currency_text'];
+    $booking_details->currency_text_position = $information['currency_text_position'];
+    $booking_details->payment_method = $information['method'];
+    $booking_details->gateway_type = $information['type'];
+    $booking_details->attachment = $request->hasFile('attachment') ? $information['attachment'] : null;
+    // $booking_details->payment_status will be updated by payment gateway controllers
+    $booking_details->save();
+
+    // Affiliate Tracking
+    // Check session first, then form input (form input name: 'affiliate_code_input')
+    $affiliateCode = $request->session()->get('affiliate_code', $request->input('affiliate_code_input'));
+
+    if ($affiliateCode) {
+        $affiliate = Affiliate::where('affiliate_code', $affiliateCode)->where('status', 'approved')->first();
+
+        if ($affiliate) {
+            $referral = AffiliateReferral::create([
+                'affiliate_id' => $affiliate->id,
+                'booking_id' => $booking_details->id,
+                'booking_type' => 'package',
+            ]);
+
+            // Basic settings might store a global commission rate
+            // For now, let's assume a fixed 10% or fetch from a config/setting
+            // $settings = Basic::select('affiliate_commission_rate')->first();
+            // $commissionRate = $settings && $settings->affiliate_commission_rate ? $settings->affiliate_commission_rate : 10.00;
+            $commissionRate = 10.00; // Defaulting to 10% for now
+
+            $commissionAmount = ($booking_details->grand_total * $commissionRate) / 100;
+
+            AffiliateCommission::create([
+                'affiliate_id' => $affiliate->id,
+                'referral_id' => $referral->id,
+                'booking_id' => $booking_details->id,
+                'booking_type' => 'package',
+                'guest_name' => $booking_details->customer_name,
+                'booking_value' => $booking_details->grand_total,
+                'commission_rate' => $commissionRate,
+                'commission_amount' => $commissionAmount,
+                'status' => 'pending', // Will be 'paid' after admin processes payment
+            ]);
+        }
+        // Clear the affiliate code from session after processing
+        $request->session()->forget('affiliate_code');
+    }
 
     return $booking_details;
   }

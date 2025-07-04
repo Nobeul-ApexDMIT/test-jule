@@ -371,6 +371,13 @@ $metaDesc = !empty($seo->meta_description_contact_us) ? $seo->meta_description_c
           @enderror
         </fieldset> -->
       </div>
+      {{-- Affiliate Code Input --}}
+      <div class="row">
+        <fieldset class="col-12">
+            <label for="affiliate_code_input">{{ __('Affiliate Code (Optional)') }}</label>
+            <input style="height: 60px; padding-inline:20px;" id="affiliate_code_input" type="text" class="form-control" name="affiliate_code_input" value="{{ old('affiliate_code_input', session()->get('affiliate_code')) }}">
+        </fieldset>
+      </div>
       <div class="row">
         <fieldset class="col-12">
           <label for="special_requirements">Special Requirements</label>

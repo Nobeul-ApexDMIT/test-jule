@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminRoomBookingRequest;
 use App\Http\Requests\CouponRequest;
 use App\Models\BasicSettings\MailTemplate;
+use App\Models\BasicSettings\Basic; // Already present from previous User model check, but good to ensure
+use App\Models\AffiliateSystem\Affiliate;
+use App\Models\AffiliateSystem\AffiliateReferral;
+use App\Models\AffiliateSystem\AffiliateCommission;
 use App\Models\Language;
 use App\Models\PaymentGateway\OfflineGateway;
 use App\Models\PaymentGateway\OnlineGateway;
@@ -1408,27 +1412,63 @@ class RoomController extends Controller
 
     $gatewayType = in_array($request->payment_method, $onlinePaymentGateway) ? 'online' : 'offline';
 
-    $bookingInfo = RoomBooking::query()->create([
-      'booking_number' => time(),
-      'user_id' => null,
-      'customer_name' => $request->customer_name,
-      'customer_email' => $request->customer_email,
-      'customer_phone' => $request->customer_phone,
-      'room_id' => $request->room_id,
-      'arrival_date' => $dateArray[0],
-      'departure_date' => $dateArray[2],
-      'guests' => $request->guests,
-      'subtotal' => $request->subtotal,
-      'discount' => $request->discount,
-      'grand_total' => $request->total,
-      'currency_symbol' => $currencyInfo->base_currency_symbol,
-      'currency_symbol_position' => $currencyInfo->base_currency_symbol_position,
-      'currency_text' => $currencyInfo->base_currency_text,
-      'currency_text_position' => $currencyInfo->base_currency_text_position,
-      'payment_method' => $request->payment_method,
-      'gateway_type' => $gatewayType,
-      'payment_status' => $request->payment_status
-    ]);
+    // Create booking instance first
+    $bookingInfo = new RoomBooking;
+    $bookingInfo->booking_number = time();
+    $bookingInfo->user_id = null; // Admin bookings are not linked to a frontend user by default
+    $bookingInfo->customer_name = $request->customer_name;
+    $bookingInfo->customer_email = $request->customer_email;
+    $bookingInfo->customer_phone = $request->customer_phone;
+    $bookingInfo->room_id = $request->room_id;
+    $bookingInfo->arrival_date = $dateArray[0];
+    $bookingInfo->departure_date = $dateArray[2];
+    $bookingInfo->guests = $request->guests;
+    $bookingInfo->subtotal = $request->subtotal;
+    $bookingInfo->discount = $request->discount;
+    $bookingInfo->grand_total = $request->total;
+    $bookingInfo->currency_symbol = $currencyInfo->base_currency_symbol;
+    $bookingInfo->currency_symbol_position = $currencyInfo->base_currency_symbol_position;
+    $bookingInfo->currency_text = $currencyInfo->base_currency_text;
+    $bookingInfo->currency_text_position = $currencyInfo->base_currency_text_position;
+    $bookingInfo->payment_method = $request->payment_method;
+    $bookingInfo->gateway_type = $gatewayType;
+    $bookingInfo->payment_status = $request->payment_status;
+    $bookingInfo->save(); // Save to get an ID
+
+    // Affiliate Tracking for Admin Manual Booking
+    // Input name for admin form: affiliate_code_input_admin
+    $affiliateCode = $request->input('affiliate_code_input_admin');
+
+    if ($affiliateCode) {
+        $affiliate = Affiliate::where('affiliate_code', $affiliateCode)->where('status', 'approved')->first();
+
+        if ($affiliate) {
+            $referral = AffiliateReferral::create([
+                'affiliate_id' => $affiliate->id,
+                'booking_id' => $bookingInfo->id,
+                'booking_type' => 'room',
+            ]);
+
+            // $basicSettings = Basic::select('affiliate_commission_rate')->first();
+            // $commissionRate = $basicSettings && $basicSettings->affiliate_commission_rate ? $basicSettings->affiliate_commission_rate : 10.00;
+            // For now, using a fixed rate. This should ideally come from a setting.
+            $commissionRate = 10.00;
+
+            $commissionAmount = ($bookingInfo->grand_total * $commissionRate) / 100;
+
+            AffiliateCommission::create([
+                'affiliate_id' => $affiliate->id,
+                'referral_id' => $referral->id,
+                'booking_id' => $bookingInfo->id,
+                'booking_type' => 'room',
+                'guest_name' => $bookingInfo->customer_name,
+                'booking_value' => $bookingInfo->grand_total,
+                'commission_rate' => $commissionRate,
+                'commission_amount' => $commissionAmount,
+                'status' => 'pending', // Initial status
+            ]);
+        }
+    }
 
     if ($request->payment_status == 1) {
       // generate an invoice in pdf format

@@ -28,6 +28,7 @@ use App\Http\Controllers\BackEnd\PushNotificationController;
 use App\Http\Controllers\BackEnd\RoomController as AdminRoomController;
 use App\Http\Controllers\BackEnd\ServiceController as AdminServiceController;
 use App\Http\Controllers\BackEnd\SummernoteController;
+use App\Http\Controllers\BackEnd\AffiliateController as AdminAffiliateController; // New Affiliate Controller for Admin
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\FrontEnd\AffiliateProgramController;
 use App\Http\Controllers\FrontEnd\BlogController;
@@ -62,6 +63,8 @@ use App\Http\Controllers\FrontEnd\Room\RoomBookingController;
 use App\Http\Controllers\FrontEnd\Room\RoomController;
 use App\Http\Controllers\FrontEnd\ServiceController;
 use App\Http\Controllers\FrontEnd\UserController;
+use App\Http\Controllers\FrontEnd\AffiliateLoginController; // Added for Affiliate OTP Login
+use App\Http\Controllers\FrontEnd\AffiliateDashboardController; // Added for Affiliate Dashboard
 use Illuminate\Support\Facades\Route;
 
 
@@ -1003,9 +1006,32 @@ Route::prefix('/admin')->middleware(['auth:admin', 'lfm.path'])->group(function 
     Route::get('/qr-code/clear', 'App\Http\Controllers\BackEnd\QrController@clear')->name('admin.qrcode.clear');
     Route::post('/qr-code/save', 'App\Http\Controllers\BackEnd\QrController@save')->name('admin.qrcode.save');
   });
+
+  // Affiliate Program Management Routes
+  Route::group(['middleware' => 'checkpermission:Affiliate Management'], function () { // Assuming a new permission 'Affiliate Management'
+    Route::get('/affiliates', [AdminAffiliateController::class, 'index'])->name('admin.affiliates.index');
+    Route::get('/affiliates/{id}/view', [AdminAffiliateController::class, 'view'])->name('admin.affiliates.view');
+    Route::post('/affiliates/{id}/approve', [AdminAffiliateController::class, 'approve'])->name('admin.affiliates.approve');
+    Route::post('/affiliates/{id}/reject', [AdminAffiliateController::class, 'reject'])->name('admin.affiliates.reject');
+    // Add more routes as needed, e.g., for resending approval email, etc.
+  });
 });
 Route::get('/test', 'App\Http\Controllers\FrontEnd\PageController@test')->name('front.test');
 Route::get('/recreation', 'App\Http\Controllers\FrontEnd\PageController@recreation')->name('front.recreation');
 Route::get('/dining', 'App\Http\Controllers\FrontEnd\PageController@dining')->name('front.dining');
 Route::get('/facilities', 'App\Http\Controllers\FrontEnd\PageController@facilities')->name('front.facilities');
 Route::get('/{slug}', 'App\Http\Controllers\FrontEnd\PageController@dynamicPage')->name('front.dynamicPage')->middleware('language');
+
+// Affiliate Login Routes
+Route::prefix('affiliate')->name('affiliate.')->group(function () {
+    Route::get('/login', [AffiliateLoginController::class, 'showLoginForm'])->name('login.form')->middleware('guest:web');
+    Route::post('/login', [AffiliateLoginController::class, 'sendOtp'])->name('login.send_otp')->middleware('guest:web');
+    Route::get('/verify-otp', [AffiliateLoginController::class, 'showOtpForm'])->name('otp.form')->middleware('guest:web');
+    Route::post('/verify-otp', [AffiliateLoginController::class, 'verifyOtp'])->name('otp.verify')->middleware('guest:web');
+
+    Route::middleware(['auth:web', 'language'])->group(function () { // Assuming 'language' middleware is appropriate here
+        Route::get('/dashboard', [AffiliateDashboardController::class, 'dashboard'])->name('dashboard');
+        Route::get('/commission-history', [AffiliateDashboardController::class, 'commissionHistory'])->name('commission.history');
+        Route::post('/logout', [AffiliateLoginController::class, 'logout'])->name('logout'); // Placeholder for logout
+    });
+});

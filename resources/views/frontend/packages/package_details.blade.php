@@ -445,6 +445,12 @@
                     @enderror
                   </div>
 
+                  {{-- Affiliate Code Input --}}
+                  <div class="form_group">
+                    <input type="text" placeholder="{{ __('Affiliate Code (Optional)') }}" name="affiliate_code_input" value="{{ old('affiliate_code_input', session()->get('affiliate_code')) }}">
+                     {{-- No icon needed here as per existing form style for packages --}}
+                  </div>
+
                   <div class="form_group h-50">
                     <select name="paymentType" id="payment-gateways" class="nice-select">
                       <option selected value="none">

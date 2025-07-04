@@ -27,6 +27,11 @@ class RoomController extends Controller
 
   public function rooms(Request $request)
   {
+    // Handle affiliate reference code
+    if ($request->has('ref')) {
+        $request->session()->put('affiliate_code', $request->input('ref'));
+    }
+
     $queryResult['breadcrumbInfo'] = MiscellaneousTrait::getBreadcrumb();
     $queryResult['roomRating'] = DB::table('basic_settings')->select('room_rating_status')->first();
 
