@@ -1,7 +1,27 @@
 @extends('frontend.layout')
 
 @section('styles')
-  @include('frontend.theme_one_two.include.styles')
+  {{-- bootstrap css --}}
+  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/bootstrap.min.css') }}">
+  {{-- jQuery-ui css --}}
+  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/jquery-ui.min.css') }}">
+  {{-- plugins css --}}
+  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/plugins.min.css') }}">
+  {{-- default css --}}
+  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/default.css') }}">
+  {{-- main css --}}
+  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/main.css') }}">
+  {{-- responsive css --}}
+  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/responsive.css') }}">
+
+  {{-- Conditionally include RTL and other theme styles if $currentLanguageInfo and $websiteInfo are reliably available --}}
+  {{-- For now, keeping it simple to avoid potential errors with these variables in this specific context --}}
+  @if (isset($currentLanguageInfo) && $currentLanguageInfo->direction == 1)
+    <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/rtl.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/rtl-responsive.css') }}">
+  @endif
+  {{-- It's safer to assume $websiteInfo might not always be perfectly set in every specific controller path without explicit passing --}}
+  {{-- So, being cautious with theme-specific styles here unless confirmed they don't cause issues --}}
 @endsection
 
 @section('pageHeading')

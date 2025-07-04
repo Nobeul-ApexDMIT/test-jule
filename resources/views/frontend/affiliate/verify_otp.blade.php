@@ -1,7 +1,23 @@
 @extends('frontend.layout')
 
 @section('styles')
-  @include('frontend.theme_one_two.include.styles')
+  {{-- bootstrap css --}}
+  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/bootstrap.min.css') }}">
+  {{-- jQuery-ui css --}}
+  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/jquery-ui.min.css') }}">
+  {{-- plugins css --}}
+  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/plugins.min.css') }}">
+  {{-- default css --}}
+  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/default.css') }}">
+  {{-- main css --}}
+  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/main.css') }}">
+  {{-- responsive css --}}
+  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/responsive.css') }}">
+
+  @if (isset($currentLanguageInfo) && $currentLanguageInfo->direction == 1)
+    <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/rtl.css') }}">
+    <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/rtl-responsive.css') }}">
+  @endif
 @endsection
 
 @section('pageHeading')
