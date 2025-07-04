@@ -1,76 +1,40 @@
-@extends('frontend.layout')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Affiliate Login Test</title>
+</head>
+<body>
+    <h1>Affiliate Login Page Test</h1>
+    <p>If you see this, the basic view rendering is working.</p>
 
-@section('styles')
-  {{-- bootstrap css --}}
-  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/bootstrap.min.css') }}">
-  {{-- jQuery-ui css --}}
-  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/jquery-ui.min.css') }}">
-  {{-- plugins css --}}
-  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/plugins.min.css') }}">
-  {{-- default css --}}
-  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/default.css') }}">
-  {{-- main css --}}
-  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/main.css') }}">
-  {{-- responsive css --}}
-  <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/responsive.css') }}">
+    @if (session('error'))
+      <div style="color: red;">Error: {{ session('error') }}</div>
+    @endif
+    @if (session('info'))
+      <div style="color: blue;">Info: {{ session('info') }}</div>
+    @endif
+    @if (session('success'))
+      <div style="color: green;">Success: {{ session('success') }}</div>
+    @endif
 
-  {{-- Conditionally include RTL and other theme styles if $currentLanguageInfo and $websiteInfo are reliably available --}}
-  {{-- For now, keeping it simple to avoid potential errors with these variables in this specific context --}}
-  @if (isset($currentLanguageInfo) && $currentLanguageInfo->direction == 1)
-    <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/rtl.css') }}">
-    <link rel="stylesheet" href="{{ asset('front/theme_one_two/assets/css/rtl-responsive.css') }}">
-  @endif
-  {{-- It's safer to assume $websiteInfo might not always be perfectly set in every specific controller path without explicit passing --}}
-  {{-- So, being cautious with theme-specific styles here unless confirmed they don't cause issues --}}
-@endsection
-
-@section('pageHeading')
-  {{ __('Affiliate Login') }}
-@endsection
-
-@section('content')
-<main>
-  <section class="user-dashboard">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-6">
-          <div class="store-user-from">
-            <div class="title text-center">
-              <h1>{{ __('Affiliate Login') }}</h1>
-              <p>{{ __('Login using your registered mobile number and OTP.') }}</p>
-            </div>
-
-            @if (session('error'))
-              <div class="alert alert-danger">{{ session('error') }}</div>
-            @endif
-            @if (session('info'))
-              <div class="alert alert-info">{{ session('info') }}</div>
-            @endif
-            @if (session('success'))
-              <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-
-            <form action="{{ route('affiliate.login.send_otp') }}" method="POST" class="mt-4">
-              @csrf
-              <div class="form_group">
-                <label>{{ __('Registered Mobile Number') }} <span>*</span></label>
-                <input type="text" class="form-control" name="mobile" value="{{ old('mobile') }}" required placeholder="e.g., 01xxxxxxxxx">
-                @error('mobile')
-                  <p class="text-danger">{{ $message }}</p>
-                @enderror
-              </div>
-
-              <div class="form_group">
-                <button type="submit" class="btn filled-btn btn-block">{{ __('Send OTP') }}</button>
-              </div>
-            </form>
-            <div class="mt-4 text-center">
-                <p>{{ __("Don't have an affiliate account?") }} <a href="{{ url('/affiliate-program') }}">{{ __('Apply Here') }}</a></p>
-            </div>
-          </div>
-        </div>
+    <form action="{{ route('affiliate.login.send_otp') }}" method="POST" style="margin-top: 20px;">
+      @csrf
+      <div>
+        <label for="mobile">Registered Mobile Number *</label><br>
+        <input type="text" id="mobile" name="mobile" value="{{ old('mobile') }}" required placeholder="e.g., 01xxxxxxxxx">
+        @error('mobile')
+          <p style="color: red;">{{ $message }}</p>
+        @enderror
       </div>
+
+      <div style="margin-top: 10px;">
+        <button type="submit">Send OTP</button>
+      </div>
+    </form>
+    <div style="margin-top: 20px;">
+        <p>Don't have an affiliate account? <a href="{{ url('/affiliate-program') }}">Apply Here</a></p>
     </div>
-  </section>
-</main>
-@endsection
+</body>
+</html>
